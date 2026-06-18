@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แพลตฟอร์มบทเรียนออนไลน์ สกร.ระดับอำเภอนาแก</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            /* Theme 1: จักรวาล (Galaxy / Default) */
+            --color-bg-dark: #0a0a1a;
+            --color-primary: #8a2be2;
+            --color-primary-glow: rgba(138, 43, 226, 0.5);
+            --color-secondary: #FFD700;
+            --color-text-main: #ffffff;
+            --color-text-muted: #b3b3b3;
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body[data-theme="2"] {
+            /* Theme 2: ทะเลลึก (Deep Ocean) */
+            --color-bg-dark: #001f3f;
+            --color-primary: #0074D9;
+            --color-primary-glow: rgba(0, 116, 217, 0.5);
+            --color-secondary: #39CCCC;
+        }
+
+        body[data-theme="3"] {
+            /* Theme 3: ธรรมชาติ (Nature) */
+            --color-bg-dark: #002b12;
+            --color-primary: #2ECC40;
+            --color-primary-glow: rgba(46, 204, 64, 0.5);
+            --color-secondary: #FFDC00;
+        }
+
+        body[data-theme="4"] {
+            /* Theme 4: ท้องฟ้าตะวันรอน (Sunset) */
+            --color-bg-dark: #2c0000;
+            --color-primary: #FF4136;
+            --color-primary-glow: rgba(255, 65, 54, 0.5);
+            --color-secondary: #FF851B;
+        }
+
+        body[data-theme="5"] {
+            /* Theme 5: คลาสสิกมินิมอล (Classic Light) */
+            --color-bg-dark: #f4f6f8;
+            --color-primary: #0056b3;
+            --color-primary-glow: rgba(0, 86, 179, 0.3);
+            --color-secondary: #17a2b8;
+            --color-text-main: #333333;
+            --color-text-muted: #666666;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --input-bg: rgba(255, 255, 255, 1);
+        }
+
+        body[data-theme="6"] {
+            /* Theme 6: แสดสดใส (Vibrant Orange) */
+            --color-bg-dark: #3e1500;
+            --color-primary: #FF6600;
+            --color-primary-glow: rgba(255, 102, 0, 0.5);
+            --color-secondary: #FFD700;
+        }
+
+        body[data-theme="7"] {
+            /* Theme 7: ทองคำ (Golden Hour) */
+            --color-bg-dark: #2b2000;
+            --color-primary: #FFB300;
+            --color-primary-glow: rgba(255, 179, 0, 0.5);
+            --color-secondary: #FFF176;
+        }
+
+        body[data-theme="8"] {
+            /* Theme 8: ม่วงคราม (Mystic Purple) */
+            --color-bg-dark: #1a0033;
+            --color-primary: #9C27B0;
+            --color-primary-glow: rgba(156, 39, 176, 0.5);
+            --color-secondary: #E040FB;
+        }
+
+        body[data-theme="9"] {
+            /* Theme 9: ไซเบอร์พังก์ (Cyberpunk) */
+            --color-bg-dark: #0d0d0d;
+            --color-primary: #FF007F;
+            --color-primary-glow: rgba(255, 0, 127, 0.5);
+            --color-secondary: #00E5FF;
+        }
+
+        body[data-theme="10"] {
+            /* Theme 10: พาสเทลหวาน (Sweet Pastel Light) */
+            --color-bg-dark: #fff5f8;
+            --color-primary: #FF4081;
+            --color-primary-glow: rgba(255, 64, 129, 0.3);
+            --color-secondary: #7C4DFF;
+            --color-text-main: #333333;
+            --color-text-muted: #666666;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --input-bg: rgba(255, 255, 255, 1);
+        }
+        
+        body[data-animation="false"] #space-bg {
+            display: none !important;
+        }
+
+        body[data-theme="5"] #space-bg,
+        body[data-theme="10"] #space-bg {
+            filter: invert(1);
+            opacity: 0.3;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        body {
+            font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-main);
+            overflow-x: hidden;
+        }
+
+        /* ============ ANIMATED SPACE BACKGROUND ============ */
+        #space-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Twinkling stars layers */
+        .stars-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+        }
+        .stars-layer-1 {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 160px 20px, #fff, transparent),
+                radial-gradient(2px 2px at 200px 100px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(1px 1px at 250px 50px, #fff, transparent),
+                radial-gradient(2px 2px at 300px 120px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 350px 90px, #fff, transparent),
+                radial-gradient(2px 2px at 400px 30px, rgba(255,255,255,0.5), transparent);
+            background-repeat: repeat;
+            background-size: 420px 150px;
+            animation: twinkle1 4s ease-in-out infinite alternate;
+        }
+        .stars-layer-2 {
+            background-image:
+                radial-gradient(1px 1px at 50px 110px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(2px 2px at 100px 20px, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 180px 80px, #fff, transparent),
+                radial-gradient(2px 2px at 220px 130px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 280px 10px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 330px 60px, #fff, transparent),
+                radial-gradient(2px 2px at 380px 140px, rgba(255,255,255,0.8), transparent);
+            background-repeat: repeat;
+            background-size: 400px 160px;
+            animation: twinkle2 5s ease-in-out infinite alternate;
+        }
+        .stars-layer-3 {
+            background-image:
+                radial-gradient(3px 3px at 70px 50px, rgba(138,43,226,0.6), transparent),
+                radial-gradient(2px 2px at 150px 100px, rgba(255,215,0,0.4), transparent),
+                radial-gradient(3px 3px at 250px 30px, rgba(138,43,226,0.5), transparent),
+                radial-gradient(2px 2px at 340px 80px, rgba(255,215,0,0.3), transparent);
+            background-repeat: repeat;
+            background-size: 380px 130px;
+            animation: twinkle3 7s ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle1 {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        @keyframes twinkle2 {
+            0% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        @keyframes twinkle3 {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+
+        /* Floating nebula blobs */
+        .nebula {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .nebula-1 {
+            width: 500px; height: 500px;
+            top: -100px; left: -100px;
+            background: radial-gradient(circle, rgba(138,43,226,0.25) 0%, transparent 70%);
+            animation: nebulaDrift1 20s ease-in-out infinite alternate;
+        }
+        .nebula-2 {
+            width: 400px; height: 400px;
+            bottom: -50px; right: -80px;
+            background: radial-gradient(circle, rgba(255,215,0,0.12) 0%, transparent 70%);
+            animation: nebulaDrift2 25s ease-in-out infinite alternate;
+        }
+        .nebula-3 {
+            width: 300px; height: 300px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(100,0,200,0.15) 0%, transparent 70%);
+            animation: nebulaDrift3 18s ease-in-out infinite alternate;
+        }
+
+        @keyframes nebulaDrift1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, 40px) scale(1.2); }
+        }
+        @keyframes nebulaDrift2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-50px, -30px) scale(1.15); }
+        }
+        @keyframes nebulaDrift3 {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            100% { transform: translate(-40%, -60%) scale(1.3); }
+        }
+
+        /* ============ LAYOUT ============ */
+        #app-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 6rem 1.5rem;
+        }
+
+        .page-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        .page-section.active {
+            display: block;
+            animation: slideUpFade 0.5s forwards;
+        }
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============ GLASS CARD ============ */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+        }
+
+        /* ============ TYPOGRAPHY ============ */
+        h1, h2, h3 { color: var(--color-text-main); }
+        h1.course-title {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        h2 {
+            color: var(--color-secondary);
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+        p.subtitle {
+            color: var(--color-text-muted);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* ============ FORM ELEMENTS ============ */
+        .form-group { margin-bottom: 1.5rem; }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--color-text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 12px var(--color-primary-glow);
+        }
+        option { background: #1a1a2e; color: var(--color-text-main); }
+
+        /* ============ BUTTONS ============ */
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--color-primary), #6002b8);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--color-primary-glow);
+        }
+
+        .btn-secondary {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            color: var(--color-text-main);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 0.8rem;
+            font-family: inherit;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--color-primary);
+        }
+
+        /* ============ COURSE COVER ============ */
+        .course-cover-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .course-cover-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .course-cover-container img[src=""],
+        .course-cover-container img:not([src]) {
+            display: none;
+        }
+
+        /* ============ QUIZ ============ */
+        .quiz-question {
+            font-size: 1.15rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+        }
+        .quiz-option {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1rem 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 0.7rem;
+            transition: var(--transition);
+        }
+        .quiz-option:hover {
+            background: rgba(138, 43, 226, 0.15);
+            border-color: var(--color-primary);
+        }
+        .quiz-option.selected {
+            background: rgba(138, 43, 226, 0.35);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px var(--color-primary-glow);
+        }
+
+        /* ============ WORKSHEET TABS ============ */
+        .worksheet-tabs {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .tab-btn {
+            flex: 1;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--color-text-muted);
+            padding: 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .tab-btn.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--color-secondary);
+            border-color: var(--color-secondary);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .image-placeholder img {
+            width: 100%;
+            border-radius: 10px;
+            display: block;
+        }
+        .image-placeholder img[src=""],
+        .image-placeholder img:not([src]) {
+            display: none;
+        }
+
+        /* ============ VIDEO / MEDIA CARDS ============ */
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .media-card {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .media-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.3);
+            border-color: var(--color-primary);
+        }
+        .media-card img {
+            width: 100%;
+            display: block;
+        }
+        .video-thumb-wrapper {
+            position: relative;
+        }
+        .video-thumb-wrapper img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+        .video-play-icon {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px; height: 64px;
+            background: rgba(0,0,0,0.65);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .video-play-icon::after {
+            content: '';
+            display: block;
+            width: 0; height: 0;
+            border-style: solid;
+            border-width: 12px 0 12px 22px;
+            border-color: transparent transparent transparent #fff;
+            margin-left: 4px;
+        }
+        .media-card:hover .video-play-icon {
+            background: rgba(138, 43, 226, 0.85);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        .media-card-label {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+        .infographic-img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .infographic-img[src=""] { display: none; }
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--glass-border);
+            margin: 1.5rem 0;
+        }
+
+        h3 { margin-bottom: 0.8rem; font-size: 1.1rem; }
+
+        /* ============ DASHBOARD ============ */
+        .score-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .score-card {
+            background: var(--input-bg);
+            padding: 1.5rem;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+        .score-card h3 { margin-bottom: 0.3rem; font-size: 0.95rem; color: var(--color-text-muted); }
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+        }
+        .score-card.highlight {
+            background: rgba(255, 215, 0, 0.06);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        .score-card.highlight .score-value { color: var(--color-secondary); }
+
+        .student-info-text {
+            text-align: center;
+            color: var(--color-text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--input-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stats-table th, .stats-table td {
+            padding: 0.9rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .stats-table th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* ============ LOADING ============ */
+        #loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--color-bg-dark);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 4px solid var(--glass-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ============ FOOTER ============ */
+        footer {
+            position: fixed;
+            bottom: 0; left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 0.8rem 1rem;
+            background: rgba(10, 10, 26, 0.95);
+            color: var(--color-secondary);
+            z-index: 100;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ============ CHART CONTAINER ============ */
+        .chart-section {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .chart-section h3 {
+            color: var(--color-secondary);
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            text-align: center;
+        }
+        .chart-box {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+        .chart-box canvas {
+            width: 100% !important;
+            max-height: 300px;
+        }
+        .btn-dashboard-link {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            background: transparent;
+            color: var(--color-secondary);
+            border: 1px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            text-align: center;
+        }
+        .btn-dashboard-link:hover {
+            background: rgba(255, 215, 0, 0.06);
+            border-color: var(--color-secondary);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 600px) {
+            #app-container { padding: 1rem 1rem 5rem 1rem; }
+            .glass-card { padding: 1.5rem 1.2rem; border-radius: 16px; }
+            .score-cards { grid-template-columns: 1fr; }
+            h1.course-title { font-size: 1.4rem; }
+            h2 { font-size: 1.2rem; }
+            .score-value { font-size: 2rem; }
+            .worksheet-tabs { flex-direction: column; gap: 0.5rem; }
+            .chart-box canvas { max-height: 250px; }
+        }
+
+        /* ============ AUTO-REDUCE MOTION FOR LOW-END DEVICES ============ */
+        @media (prefers-reduced-motion: reduce) {
+            .stars-layer-1, .stars-layer-2, .stars-layer-3 { animation: none !important; opacity: 0.6; }
+            .nebula { animation: none !important; }
+            body { animation: none !important; background-size: 100% 100%; }
+            .page-section.active { animation: none !important; opacity: 1; transform: none; }
+            .spinner { animation: none !important; }
+        }
+
+        /* ============ PDPA & USER GUIDE ============ */
+        .btn-guide {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 0.8rem;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(255, 215, 0, 0.04));
+            color: var(--color-secondary);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            text-align: center;
+        }
+        .btn-guide:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.22), rgba(255, 215, 0, 0.1));
+            border-color: var(--color-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== ANIMATED SPACE BACKGROUND ===== -->
+    <div class="stars-layer stars-layer-1"></div>
+    <div class="stars-layer stars-layer-2"></div>
+    <div class="stars-layer stars-layer-3"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+
+    <!-- ===== LOADING OVERLAY ===== -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <h2 style="border:none; color: var(--color-text-main);">กำลังโหลดข้อมูลบทเรียน...</h2>
+    </div>
+
+    <!-- ===== MAIN APP ===== -->
+    <div id="app-container" style="display:none;">
+
+        <!-- 1. LOGIN -->
+        <section id="section-login" class="page-section active">
+            <div class="glass-card">
+                <div class="course-cover-container">
+                    <img id="course-cover" src="" alt="Course Cover">
+                </div>
+                <h1 class="course-title" id="display-course-name">ชื่อรายวิชา</h1>
+                <p class="subtitle">กรุณาลงชื่อเข้าใช้งานเพื่อเริ่มต้นเรียนรู้</p>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>ชื่อ - นามสกุล</label>
+                        <input type="text" id="student-name" required placeholder="ด.ช. / ด.ญ. / นาย / นางสาว ...">
+                    </div>
+                    <div class="form-group">
+                        <label>ระดับการศึกษา</label>
+                        <select id="education-level" required>
+                            <option value="" disabled selected>เลือกระดับการศึกษา...</option>
+                            <option value="ประถมศึกษา">ประถมศึกษา</option>
+                            <option value="มัธยมศึกษาตอนต้น">มัธยมศึกษาตอนต้น</option>
+                            <option value="มัธยมศึกษาตอนปลาย">มัธยมศึกษาตอนปลาย</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ศกร.ระดับตำบล</label>
+                        <select id="sub-district" required>
+                            <option value="" disabled selected>เลือก ศกร.ระดับตำบล...</option>
+                            <option value="ศกร.ระดับตำบลนาแก">ศกร.ระดับตำบลนาแก</option>
+                            <option value="ศกร.ระดับตำบลพระซอง">ศกร.ระดับตำบลพระซอง</option>
+                            <option value="ศกร.ระดับตำบลหนองสังข์">ศกร.ระดับตำบลหนองสังข์</option>
+                            <option value="ศกร.ระดับตำบลนาคู่">ศกร.ระดับตำบลนาคู่</option>
+                            <option value="ศกร.ระดับตำบลพิมาน">ศกร.ระดับตำบลพิมาน</option>
+                            <option value="ศกร.ระดับตำบลพุ่มแก">ศกร.ระดับตำบลพุ่มแก</option>
+                            <option value="ศกร.ระดับตำบลก้านเหลือง">ศกร.ระดับตำบลก้านเหลือง</option>
+                            <option value="ศกร.ระดับตำบลหนองบ่อ">ศกร.ระดับตำบลหนองบ่อ</option>
+                            <option value="ศกร.ระดับตำบลนาเลียง">ศกร.ระดับตำบลนาเลียง</option>
+                            <option value="ศกร.ระดับตำบลบ้านแก้ง">ศกร.ระดับตำบลบ้านแก้ง</option>
+                            <option value="ศกร.ระดับตำบลคำพี้">ศกร.ระดับตำบลคำพี้</option>
+                            <option value="ศกร.ระดับตำบลสีชมพู">ศกร.ระดับตำบลสีชมพู</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">เข้าสู่บทเรียน →</button>
+                </form>
+                <button class="btn-dashboard-link" onclick="app.showDashboardFromLogin()">📊 ดู Dashboard สถิติภาพรวมรายวิชา</button>
+                <button class="btn-guide" onclick="app.showUserGuide()">📖 คู่มือการใช้งานระบบ</button>
+            </div>
+        </section>
+
+        <!-- 2. COURSE DESCRIPTION -->
+        <section id="section-description" class="page-section">
+            <div class="glass-card">
+                <h2>📖 คำอธิบายรายวิชา</h2>
+                <div style="line-height:1.8; margin-bottom:1.5rem;">
+                    <p id="course-description-content"></p>
+                </div>
+                <button type="button" class="btn-primary" onclick="app.navigate('section-pretest')">เริ่มทำแบบทดสอบก่อนเรียน →</button>
+            </div>
+        </section>
+
+        <!-- 3. PRE-TEST -->
+        <section id="section-pretest" class="page-section">
+            <div class="glass-card">
+                <h2>📝 แบบทดสอบก่อนเรียน</h2>
+                <div id="pretest-container"></div>
+            </div>
+        </section>
+
+        <!-- 4. LEARNING CONTENT -->
+        <section id="section-content" class="page-section">
+            <div class="glass-card">
+                <h2>📚 เนื้อหาบทเรียน</h2>
+                <p style="margin-bottom:1.5rem; line-height:1.7; color: var(--color-text-muted);">กรุณาศึกษาเนื้อหาด้านล่างให้ครบถ้วน ก่อนไปทำใบความรู้และใบงาน</p>
+
+                <!-- อินโฟกราฟิก -->
+                <div id="infographic-section"></div>
+
+                <!-- วิดีโอ YouTube -->
+                <div id="video-section"></div>
+
+                <button type="button" class="btn-primary" onclick="app.navigate('section-worksheets')">ไปศึกษาใบความรู้และทำใบงาน →</button>
+            </div>
+        </section>
+
+        <!-- 5. WORKSHEETS -->
+        <section id="section-worksheets" class="page-section">
+            <div class="glass-card">
+                <h2>📋 ใบความรู้และใบงาน</h2>
+                <div class="worksheet-tabs">
+                    <button class="tab-btn active" id="tab-btn-info" onclick="app.switchTab('info')">📄 ใบความรู้ (3 ใบ)</button>
+                    <button class="tab-btn" id="tab-btn-work" onclick="app.switchTab('work')">✏️ ใบงาน (3 ใบ)</button>
+                </div>
+
+                <div id="tab-info">
+                    <h3>ใบความรู้ที่ 1</h3>
+                    <div class="image-placeholder"><img id="img-info1" src="" alt="ใบความรู้ 1"></div>
+                    <h3>ใบความรู้ที่ 2</h3>
+                    <div class="image-placeholder"><img id="img-info2" src="" alt="ใบความรู้ 2"></div>
+                    <h3>ใบความรู้ที่ 3</h3>
+                    <div class="image-placeholder"><img id="img-info3" src="" alt="ใบความรู้ 3"></div>
+                    <button type="button" class="btn-primary" onclick="app.switchTab('work')">ไปทำใบงาน →</button>
+                </div>
+
+                <div id="tab-work" style="display: none;">
+                    <form id="worksheet-form">
+                        <div class="form-group">
+                            <label id="lbl-ws1">ใบงาน 1</label>
+                            <textarea id="ws1" required placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label id="lbl-ws2">ใบงาน 2</label>
+                            <textarea id="ws2" required placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label id="lbl-ws3">ใบงาน 3</label>
+                            <textarea id="ws3" required placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">ส่งใบงานและไปทำแบบทดสอบหลังเรียน →</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. POST-TEST -->
+        <section id="section-posttest" class="page-section">
+            <div class="glass-card">
+                <h2>📝 แบบทดสอบหลังเรียน</h2>
+                <div id="posttest-container"></div>
+            </div>
+        </section>
+
+        <!-- 7. DASHBOARD -->
+        <section id="section-dashboard" class="page-section">
+            <div class="glass-card">
+                <div id="dashboard-personal-view">
+                    <h2>🎓 สรุปผลการเรียนรู้ของคุณ</h2>
+                    <div id="dash-student-info" class="student-info-text"></div>
+                    <div class="score-cards">
+                        <div class="score-card">
+                            <h3>คะแนนก่อนเรียน</h3>
+                            <div class="score-value" id="dash-pre-score">0</div>
+                        </div>
+                        <div class="score-card highlight">
+                            <h3>คะแนนหลังเรียน</h3>
+                            <div class="score-value" id="dash-post-score">0</div>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="app.saveAndToggle()">💾 บันทึกข้อมูลและดูสถิติภาพรวม →</button>
+                    <button class="btn-secondary" onclick="app.resetApp()">🏠 กลับหน้าแรก</button>
+                </div>
+
+                <div id="dashboard-overview-view" style="display:none;">
+                    <h2>📊 สถิติภาพรวมของรายวิชานี้</h2>
+                    <div class="score-cards">
+                        <div class="score-card">
+                            <h3>จำนวนผู้เรียนทั้งหมด</h3>
+                            <div class="score-value" id="dash-total-students">0</div>
+                        </div>
+                        <div class="score-card highlight">
+                            <h3>คะแนนพัฒนาการเฉลี่ย</h3>
+                            <div class="score-value" id="dash-avg-improvement">0</div>
+                        </div>
+                    </div>
+
+                    <!-- กราฟเปรียบเทียบคะแนนเฉลี่ย -->
+                    <div class="chart-section">
+                        <div class="chart-box">
+                            <h3>📈 เปรียบเทียบคะแนนเฉลี่ยก่อนเรียน-หลังเรียน</h3>
+                            <canvas id="chart-avg-comparison"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- กราฟพัฒนาการเฉลี่ยตาม ศกร. -->
+                    <div class="chart-section">
+                        <div class="chart-box">
+                            <h3>🏠 พัฒนาการคะแนนเฉลี่ยแยกตาม ศกร.ระดับตำบล</h3>
+                            <canvas id="chart-subdistrict-avg"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- กราฟระดับการศึกษา -->
+                    <div class="chart-section">
+                        <div class="chart-box">
+                            <h3>🎓 สัดส่วนผู้เรียนตามระดับการศึกษา</h3>
+                            <canvas id="chart-edu-levels"></canvas>
+                        </div>
+                    </div>
+
+                    <table class="stats-table">
+                        <thead><tr><th>ระดับการศึกษา</th><th>จำนวน (คน)</th></tr></thead>
+                        <tbody id="dash-levels-table"></tbody>
+                    </table>
+                    <button class="btn-secondary" onclick="app.toggleDashboardView('personal')">← กลับไปหน้าผลการเรียนของคุณ</button>
+                    <button class="btn-secondary" onclick="app.resetApp()">🏠 กลับหน้าแรก</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>สกร.ระดับอำเภอนาแก นาแกเมืองแห่งการเรียนรู้</footer>
+
+    <script>
+        // ใส่ URL ของ Web App จาก Google Apps Script (ตอนที่นำไป Deploy บน GitHub)
+        const GAS_API_URL = ""; 
+
+        const app = {
+            state: {
+                student: { name: '', level: '', subDistrict: '' },
+                scores: { preTest: 0, postTest: 0 },
+                answers: { preTest: {}, postTest: {} },
+                worksheets: { ws1: '', ws2: '', ws3: '' }
+            },
+            courseData: null,
+
+            init: function() {
+                if (GAS_API_URL !== "") {
+                    fetch(GAS_API_URL + "?action=getCourseData")
+                        .then(res => res.json())
+                        .then(this.onDataLoaded.bind(this))
+                        .catch(function(err) {
+                            document.getElementById('loading-overlay').innerHTML = '<h2 style="color:#ff6b6b;">เกิดข้อผิดพลาด: ' + err.message + '</h2>';
+                        });
+                } else {
+                    this.onDataLoaded({
+                        settings: {
+                            CourseName: "วิชาตัวอย่าง (โหมดจำลอง)",
+                            CoverImageURL: "",
+                            CourseDescription: "คำอธิบายรายวิชาจำลอง สำหรับทดสอบระบบ",
+                            InfoSheet1URL: "", InfoSheet2URL: "", InfoSheet3URL: "",
+                            ThemeSelection: "1", EnableAnimation: "true",
+                            Worksheet1Question: "โจทย์ใบงานข้อ 1", Worksheet2Question: "โจทย์ใบงานข้อ 2", Worksheet3Question: "โจทย์ใบงานข้อ 3"
+                        },
+                        questions: [
+                            { id: 1, question: "ข้อใดถูกต้อง?", options: ["ตัวเลือก 1", "ตัวเลือก 2", "ตัวเลือก 3", "ตัวเลือก 4"], answer: 0 }
+                        ],
+                        stats: { totalStudents: 0, levels: { 'ประถมศึกษา': 0, 'มัธยมศึกษาตอนต้น': 0, 'มัธยมศึกษาตอนปลาย': 0 }, avgImprovement: '0' }
+                    });
+                }
+            },
+
+            onDataLoaded: function(data) {
+                if (data.error) {
+                    Swal.fire('ข้อผิดพลาด', data.error, 'error');
+                    return;
+                }
+                this.courseData = data;
+                // Apply Theme
+                var themeId = data.settings.ThemeSelection || "1";
+                document.body.setAttribute('data-theme', themeId.toString().trim());
+
+                // Apply Animation Setting
+                var enableAnim = data.settings.EnableAnimation;
+                if (enableAnim && enableAnim.toString().toLowerCase() === "false") {
+                    document.body.setAttribute('data-animation', 'false');
+                } else {
+                    document.body.removeAttribute('data-animation');
+                }
+
+                // Populate UI
+                document.getElementById('display-course-name').textContent = data.settings.CourseName || 'วิชาที่ยังไม่ได้ตั้งชื่อ';
+                document.getElementById('course-cover').src = this.getDirectImageUrl(data.settings.CoverImageURL);
+                document.getElementById('course-description-content').textContent = data.settings.CourseDescription || '';
+
+                document.getElementById('img-info1').src = this.getDirectImageUrl(data.settings.InfoSheet1URL);
+                document.getElementById('img-info2').src = this.getDirectImageUrl(data.settings.InfoSheet2URL);
+                document.getElementById('img-info3').src = this.getDirectImageUrl(data.settings.InfoSheet3URL);
+
+                // Populate Infographics
+                var infoSection = document.getElementById('infographic-section');
+                var infoHtml = '';
+                var infoKeys = ['InfographicURL1', 'InfographicURL2', 'InfographicURL3'];
+                for (var ig = 0; ig < infoKeys.length; ig++) {
+                    var igUrl = data.settings[infoKeys[ig]];
+                    if (igUrl && String(igUrl).trim() !== '') {
+                        infoHtml += '<h3>📌 สื่อการเรียนรู้ที่ ' + (ig + 1) + '</h3>';
+                        infoHtml += '<img class="infographic-img" src="' + this.getDirectImageUrl(igUrl) + '" alt="สื่อการเรียนรู้ ' + (ig + 1) + '">';
+                    }
+                }
+                if (infoHtml) {
+                    infoSection.innerHTML = infoHtml + '<hr class="section-divider">';
+                }
+
+                // Populate YouTube Videos
+                var videoSection = document.getElementById('video-section');
+                var videoHtml = '';
+                var videoKeys = ['YouTubeURL1', 'YouTubeURL2', 'YouTubeURL3'];
+                var videoCount = 0;
+                for (var vi = 0; vi < videoKeys.length; vi++) {
+                    var ytUrl = data.settings[videoKeys[vi]];
+                    if (ytUrl && String(ytUrl).trim() !== '') {
+                        var videoId = this.getYouTubeId(ytUrl);
+                        if (videoId) {
+                            videoCount++;
+                            videoHtml += '<div class="media-card" onclick="app.playYouTube(\'' + videoId + '\')">';
+                            videoHtml += '<div class="video-thumb-wrapper">';
+                            videoHtml += '<img src="https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg" alt="วิดีโอ ' + videoCount + '">';
+                            videoHtml += '<div class="video-play-icon"></div>';
+                            videoHtml += '</div>';
+                            videoHtml += '<div class="media-card-label">🎬 คลิปวิดีโอที่ ' + videoCount + ' — กดเพื่อเล่น</div>';
+                            videoHtml += '</div>';
+                        }
+                    }
+                }
+                if (videoHtml) {
+                    videoSection.innerHTML = '<h3>🎥 วิดีโอประกอบบทเรียน</h3><div class="media-grid">' + videoHtml + '</div>';
+                }
+
+                document.getElementById('lbl-ws1').textContent = data.settings.Worksheet1Question || 'ใบงาน 1';
+                document.getElementById('lbl-ws2').textContent = data.settings.Worksheet2Question || 'ใบงาน 2';
+                document.getElementById('lbl-ws3').textContent = data.settings.Worksheet3Question || 'ใบงาน 3';
+
+                // Stats
+                if (data.stats) {
+                    document.getElementById('dash-total-students').textContent = data.stats.totalStudents || 0;
+                    document.getElementById('dash-avg-improvement').textContent = data.stats.avgImprovement || '0';
+                    let levelsHtml = '';
+                    if (data.stats.levels) {
+                        for (let level in data.stats.levels) {
+                            levelsHtml += '<tr><td>' + level + '</td><td>' + data.stats.levels[level] + '</td></tr>';
+                        }
+                    }
+                    document.getElementById('dash-levels-table').innerHTML = levelsHtml;
+                }
+
+                // Show app
+                document.getElementById('loading-overlay').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+
+                // Attach Events
+                document.getElementById('login-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    app.navigate('section-description');
+                });
+                document.getElementById('worksheet-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    app.navigate('section-posttest');
+                });
+            },
+
+            getDirectImageUrl: function(url) {
+                if (!url) return '';
+                url = String(url).trim();
+                // Convert Google Drive links to direct image
+                var match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    return 'https://lh3.googleusercontent.com/d/' + match[1];
+                }
+                // Also handle ?id= format
+                var match2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                if (match2 && match2[1]) {
+                    return 'https://lh3.googleusercontent.com/d/' + match2[1];
+                }
+                return url;
+            },
+
+            getYouTubeId: function(url) {
+                if (!url) return null;
+                url = String(url).trim();
+                // Handle youtu.be/xxx
+                var short = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+                if (short) return short[1];
+                // Handle youtube.com/watch?v=xxx
+                var long = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+                if (long) return long[1];
+                // Handle youtube.com/embed/xxx
+                var embed = url.match(/embed\/([a-zA-Z0-9_-]{11})/);
+                if (embed) return embed[1];
+                return null;
+            },
+
+            playYouTube: function(videoId) {
+                Swal.fire({
+                    html: '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;"><iframe src="https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>',
+                    width: '90%',
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    background: '#0a0a1a',
+                    color: '#fff',
+                    customClass: { popup: 'video-popup' },
+                    didClose: function() {
+                        // Ensure video stops when closing
+                    }
+                });
+            },
+
+            navigate: function(sectionId) {
+                if (sectionId === 'section-description') {
+                    var name = document.getElementById('student-name').value;
+                    var level = document.getElementById('education-level').value;
+                    var sub = document.getElementById('sub-district').value;
+                    if (!name || !level || !sub) {
+                        Swal.fire('กรุณากรอกข้อมูลให้ครบ', 'โปรดกรอกชื่อ เลือกระดับการศึกษา และ ศกร.ระดับตำบล', 'warning');
+                        return;
+                    }
+                    this.state.student.name = name;
+                    this.state.student.level = level;
+                    this.state.student.subDistrict = sub;
+                } else if (sectionId === 'section-pretest') {
+                    this.renderQuiz('pretest-container', 'preTest', false);
+                } else if (sectionId === 'section-posttest') {
+                    this.state.worksheets.ws1 = document.getElementById('ws1').value;
+                    this.state.worksheets.ws2 = document.getElementById('ws2').value;
+                    this.state.worksheets.ws3 = document.getElementById('ws3').value;
+                    this.renderQuiz('posttest-container', 'postTest', true);
+                }
+
+                document.querySelectorAll('.page-section').forEach(function(sec) {
+                    sec.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            switchTab: function(tab) {
+                document.getElementById('tab-info').style.display = tab === 'info' ? 'block' : 'none';
+                document.getElementById('tab-work').style.display = tab === 'work' ? 'block' : 'none';
+                document.getElementById('tab-btn-info').classList.toggle('active', tab === 'info');
+                document.getElementById('tab-btn-work').classList.toggle('active', tab === 'work');
+            },
+
+            renderQuiz: function(containerId, testType, shuffle) {
+                var container = document.getElementById(containerId);
+                container.innerHTML = '';
+                var qToRender = this.courseData.questions.slice();
+                if (shuffle) {
+                    for (var i = qToRender.length - 1; i > 0; i--) {
+                        var j = Math.floor(Math.random() * (i + 1));
+                        var temp = qToRender[i];
+                        qToRender[i] = qToRender[j];
+                        qToRender[j] = temp;
+                    }
+                }
+
+                var total = qToRender.length;
+                for (var idx = 0; idx < total; idx++) {
+                    var q = qToRender[idx];
+                    var qDiv = document.createElement('div');
+                    qDiv.className = 'quiz-question-block';
+                    qDiv.style.display = idx === 0 ? 'block' : 'none';
+
+                    var html = '<div class="quiz-question">' + (idx + 1) + '/' + total + '. ' + q.question + '</div>';
+                    for (var oi = 0; oi < q.options.length; oi++) {
+                        html += '<div class="quiz-option" data-testtype="' + testType + '" data-qid="' + q.id + '" data-val="' + oi + '" data-index="' + idx + '" data-total="' + total + '">' + q.options[oi] + '</div>';
+                    }
+                    qDiv.innerHTML = html;
+                    container.appendChild(qDiv);
+                }
+
+                // Event delegation for quiz options
+                container.onclick = function(e) {
+                    var el = e.target;
+                    if (!el.classList.contains('quiz-option')) return;
+                    app.selectOpt(el);
+                };
+            },
+
+            selectOpt: function(el) {
+                var testType = el.getAttribute('data-testtype');
+                var qId = parseInt(el.getAttribute('data-qid'));
+                var val = parseInt(el.getAttribute('data-val'));
+                var currentIndex = parseInt(el.getAttribute('data-index'));
+                var total = parseInt(el.getAttribute('data-total'));
+
+                // Highlight selected
+                var siblings = el.parentElement.querySelectorAll('.quiz-option');
+                for (var i = 0; i < siblings.length; i++) { siblings[i].classList.remove('selected'); }
+                el.classList.add('selected');
+                this.state.answers[testType][qId] = val;
+
+                var self = this;
+                setTimeout(function() {
+                    var block = el.closest('.quiz-question-block');
+                    block.style.display = 'none';
+                    if (currentIndex + 1 < total) {
+                        block.nextElementSibling.style.display = 'block';
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        self.calculateScore(testType);
+                        if (testType === 'preTest') {
+                            Swal.fire({
+                                title: 'ทำแบบทดสอบก่อนเรียนเสร็จแล้ว!',
+                                text: 'คุณได้ ' + self.state.scores.preTest + ' คะแนน จาก ' + total + ' ข้อ',
+                                icon: 'info',
+                                confirmButtonColor: '#8a2be2',
+                                confirmButtonText: 'ไปศึกษาเนื้อหา →'
+                            }).then(function() {
+                                self.navigate('section-content');
+                            });
+                        } else {
+                            self.showDashboard();
+                        }
+                    }
+                }, 400);
+            },
+
+            calculateScore: function(testType) {
+                var score = 0;
+                var questions = this.courseData.questions;
+                for (var i = 0; i < questions.length; i++) {
+                    if (this.state.answers[testType][questions[i].id] === questions[i].answer) {
+                        score++;
+                    }
+                }
+                this.state.scores[testType] = score;
+            },
+
+            showDashboard: function() {
+                document.querySelectorAll('.page-section').forEach(function(sec) { sec.classList.remove('active'); });
+                document.getElementById('section-dashboard').classList.add('active');
+
+                document.getElementById('dash-student-info').innerHTML = '👤 ' + this.state.student.name + ' | ' + this.state.student.level + ' | ' + this.state.student.subDistrict;
+                document.getElementById('dash-pre-score').textContent = this.state.scores.preTest;
+                document.getElementById('dash-post-score').textContent = this.state.scores.postTest;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            saveAndToggle: function() {
+                var self = this;
+                Swal.fire({
+                    title: 'กำลังบันทึกข้อมูล...',
+                    text: 'กรุณารอสักครู่',
+                    allowOutsideClick: false,
+                    didOpen: function() { Swal.showLoading(); }
+                });
+
+                if (GAS_API_URL !== "") {
+                    fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(self.state)
+                    })
+                    .then(res => res.json())
+                    .then(function(res) {
+                        if (res.status === 'success') {
+                            Swal.fire({ title: 'สำเร็จ!', text: 'บันทึกข้อมูลการเรียนรู้ของคุณเรียบร้อยแล้ว', icon: 'success', confirmButtonColor: '#8a2be2' });
+                            self.toggleDashboardView('overview');
+                        } else {
+                            throw new Error(res.message || "Unknown Error");
+                        }
+                    })
+                    .catch(function(err) {
+                        Swal.fire('เกิดข้อผิดพลาด', err.message, 'error');
+                    });
+                } else {
+                    setTimeout(function() {
+                        Swal.fire({ title: 'สำเร็จ!', text: 'บันทึกข้อมูลเรียบร้อยแล้ว (โหมดจำลอง)', icon: 'success', confirmButtonColor: '#8a2be2' });
+                        self.toggleDashboardView('overview');
+                    }, 800);
+                }
+            },
+
+            toggleDashboardView: function(view) {
+                document.getElementById('dashboard-personal-view').style.display = view === 'overview' ? 'none' : 'block';
+                document.getElementById('dashboard-overview-view').style.display = view === 'overview' ? 'block' : 'none';
+                if (view === 'overview') this.renderCharts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            showDashboardFromLogin: function() {
+                document.querySelectorAll('.page-section').forEach(function(sec) { sec.classList.remove('active'); });
+                document.getElementById('section-dashboard').classList.add('active');
+                document.getElementById('dashboard-personal-view').style.display = 'none';
+                document.getElementById('dashboard-overview-view').style.display = 'block';
+                this.renderCharts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            chartInstances: {},
+
+            renderCharts: function() {
+                var stats = this.courseData.stats;
+                if (!stats) return;
+
+                // Destroy old charts if they exist
+                for (var key in this.chartInstances) {
+                    if (this.chartInstances[key]) this.chartInstances[key].destroy();
+                }
+
+                var chartColors = {
+                    purple: 'rgba(138, 43, 226, 0.8)',
+                    purpleLight: 'rgba(138, 43, 226, 0.3)',
+                    gold: 'rgba(255, 215, 0, 0.8)',
+                    goldLight: 'rgba(255, 215, 0, 0.3)',
+                    green: 'rgba(0, 200, 150, 0.8)',
+                    greenLight: 'rgba(0, 200, 150, 0.3)',
+                    pink: 'rgba(255, 100, 150, 0.8)',
+                    blue: 'rgba(60, 130, 255, 0.8)',
+                    textColor: '#b3b3b3',
+                    gridColor: 'rgba(255,255,255,0.08)'
+                };
+
+                var defaultOptions = {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { labels: { color: chartColors.textColor, font: { family: "'Noto Sans Thai', sans-serif" } } }
+                    },
+                    scales: {
+                        x: { ticks: { color: chartColors.textColor, font: { family: "'Noto Sans Thai', sans-serif", size: 11 } }, grid: { color: chartColors.gridColor } },
+                        y: { ticks: { color: chartColors.textColor, font: { family: "'Noto Sans Thai', sans-serif" } }, grid: { color: chartColors.gridColor }, beginAtZero: true }
+                    }
+                };
+
+                // === CHART 1: Average Pre vs Post comparison ===
+                var ctx1 = document.getElementById('chart-avg-comparison');
+                if (ctx1) {
+                    this.chartInstances['avg'] = new Chart(ctx1.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['คะแนนเฉลี่ยก่อนเรียน', 'คะแนนเฉลี่ยหลังเรียน'],
+                            datasets: [{
+                                label: 'คะแนนเฉลี่ย',
+                                data: [parseFloat(stats.avgPre || 0), parseFloat(stats.avgPost || 0)],
+                                backgroundColor: [chartColors.purpleLight, chartColors.goldLight],
+                                borderColor: [chartColors.purple, chartColors.gold],
+                                borderWidth: 2,
+                                borderRadius: 8,
+                                barPercentage: 0.6
+                            }]
+                        },
+                        options: Object.assign({}, defaultOptions, {
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { ticks: { color: chartColors.textColor, font: { family: "'Noto Sans Thai', sans-serif", size: 12 } }, grid: { display: false } },
+                                y: { ticks: { color: chartColors.textColor }, grid: { color: chartColors.gridColor }, beginAtZero: true, max: this.courseData.questions.length || 10 }
+                            }
+                        })
+                    });
+                }
+
+                // === CHART 2: Sub-district Average Comparison ===
+                var ctx2 = document.getElementById('chart-subdistrict-avg');
+                if (ctx2 && stats.subDistrictStats) {
+                    var subLabels = [];
+                    var subPreAvg = [];
+                    var subPostAvg = [];
+                    var hasSubData = false;
+
+                    for (var sub in stats.subDistrictStats) {
+                        var s = stats.subDistrictStats[sub];
+                        if (s.count > 0) {
+                            hasSubData = true;
+                            // Shorten label: remove "ศกร.ระดับตำบล" prefix
+                            var shortLabel = sub.replace('ศกร.ระดับตำบล', 'ต.');
+                            subLabels.push(shortLabel + ' (' + s.count + ' คน)');
+                            subPreAvg.push(parseFloat((s.totalPre / s.count).toFixed(1)));
+                            subPostAvg.push(parseFloat((s.totalPost / s.count).toFixed(1)));
+                        }
+                    }
+
+                    if (hasSubData) {
+                        this.chartInstances['subdistrict'] = new Chart(ctx2.getContext('2d'), {
+                            type: 'bar',
+                            data: {
+                                labels: subLabels,
+                                datasets: [
+                                    {
+                                        label: 'เฉลี่ยก่อนเรียน',
+                                        data: subPreAvg,
+                                        backgroundColor: chartColors.purpleLight,
+                                        borderColor: chartColors.purple,
+                                        borderWidth: 1,
+                                        borderRadius: 4
+                                    },
+                                    {
+                                        label: 'เฉลี่ยหลังเรียน',
+                                        data: subPostAvg,
+                                        backgroundColor: chartColors.goldLight,
+                                        borderColor: chartColors.gold,
+                                        borderWidth: 1,
+                                        borderRadius: 4
+                                    }
+                                ]
+                            },
+                            options: Object.assign({}, defaultOptions, {
+                                indexAxis: subLabels.length > 5 ? 'y' : 'x',
+                                scales: subLabels.length > 5 ? {
+                                    x: { ticks: { color: chartColors.textColor }, grid: { color: chartColors.gridColor }, beginAtZero: true, max: this.courseData.questions.length || 10 },
+                                    y: { ticks: { color: chartColors.textColor, font: { family: "'Noto Sans Thai', sans-serif", size: 11 } }, grid: { display: false } }
+                                } : {
+                                    x: { ticks: { color: chartColors.textColor, font: { family: "'Noto Sans Thai', sans-serif", size: 10 }, maxRotation: 45 }, grid: { display: false } },
+                                    y: { ticks: { color: chartColors.textColor }, grid: { color: chartColors.gridColor }, beginAtZero: true, max: this.courseData.questions.length || 10 }
+                                }
+                            })
+                        });
+                    } else {
+                        ctx2.parentElement.innerHTML = '<h3>🏠 พัฒนาการคะแนนเฉลี่ยแยกตาม ศกร.ระดับตำบล</h3><p style="text-align:center; color: #777; padding: 2rem 0;">ยังไม่มีข้อมูลผู้เรียน</p>';
+                    }
+                } else if (ctx2) {
+                    ctx2.parentElement.innerHTML = '<h3>🏠 พัฒนาการคะแนนเฉลี่ยแยกตาม ศกร.ระดับตำบล</h3><p style="text-align:center; color: #777; padding: 2rem 0;">ยังไม่มีข้อมูลผู้เรียน</p>';
+                }
+
+                // === CHART 3: Education Level Distribution (Doughnut) ===
+                var ctx3 = document.getElementById('chart-edu-levels');
+                if (ctx3 && stats.levels) {
+                    var levelLabels = [];
+                    var levelData = [];
+                    var hasData = false;
+                    for (var lv in stats.levels) {
+                        levelLabels.push(lv);
+                        levelData.push(stats.levels[lv]);
+                        if (stats.levels[lv] > 0) hasData = true;
+                    }
+
+                    if (hasData) {
+                        this.chartInstances['levels'] = new Chart(ctx3.getContext('2d'), {
+                            type: 'doughnut',
+                            data: {
+                                labels: levelLabels,
+                                datasets: [{
+                                    data: levelData,
+                                    backgroundColor: [chartColors.purple, chartColors.gold, chartColors.green],
+                                    borderColor: ['rgba(138,43,226,0.5)', 'rgba(255,215,0,0.5)', 'rgba(0,200,150,0.5)'],
+                                    borderWidth: 2,
+                                    hoverOffset: 8
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: { color: chartColors.textColor, font: { family: "'Noto Sans Thai', sans-serif", size: 12 }, padding: 15 }
+                                    }
+                                },
+                                cutout: '55%'
+                            }
+                        });
+                    } else {
+                        ctx3.parentElement.innerHTML = '<h3>🎓 สัดส่วนผู้เรียนตามระดับการศึกษา</h3><p style="text-align:center; color: #777; padding: 2rem 0;">ยังไม่มีข้อมูลผู้เรียน</p>';
+                    }
+                }
+            },
+
+            resetApp: function() {
+                var self = this;
+                Swal.fire({
+                    title: 'กลับหน้าแรก?',
+                    text: 'คุณต้องการกลับไปเริ่มต้นใหม่ใช่หรือไม่?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#8a2be2',
+                    cancelButtonColor: '#555',
+                    confirmButtonText: 'ใช่, กลับหน้าแรก',
+                    cancelButtonText: 'ยกเลิก'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        self.state.student = { name: '', level: '', subDistrict: '' };
+                        self.state.scores = { preTest: 0, postTest: 0 };
+                        self.state.answers = { preTest: {}, postTest: {} };
+                        self.state.worksheets = { ws1: '', ws2: '', ws3: '' };
+                        document.getElementById('login-form').reset();
+                        document.getElementById('worksheet-form').reset();
+                        self.toggleDashboardView('personal');
+                        self.navigate('section-login');
+                    }
+                });
+            }
+        };
+
+        /* ============ PDPA & USER GUIDE MODULE (ADDITIVE) ============ */
+        var pdpaGuide = {
+            STORAGE_KEY: 'nakae_pdpa_accepted_v1',
+
+            showWelcomePopup: function() {
+                // Check if user already accepted PDPA in this browser
+                if (localStorage.getItem(this.STORAGE_KEY)) return;
+
+                Swal.fire({
+                    title: '',
+                    html: '<div style="text-align:left; max-height:65vh; overflow-y:auto; padding-right:8px;">' +
+                        '<div style="text-align:center; margin-bottom:1rem;">' +
+                            '<div style="font-size:2.5rem; margin-bottom:0.5rem;">🔐</div>' +
+                            '<h2 style="color:#FFD700; font-size:1.3rem; margin:0 0 0.3rem 0; border:none;">นโยบายความเป็นส่วนตัว (PDPA)</h2>' +
+                            '<p style="color:#b3b3b3; font-size:0.85rem; margin:0;">พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1.2rem; margin-bottom:1.2rem;">' +
+                            '<p style="color:#fff; font-size:0.92rem; line-height:1.7; margin:0 0 0.8rem 0;">ยินดีต้อนรับสู่ <strong style="color:#FFD700;">ระบบบทเรียนออนไลน์ สกร.ระดับอำเภอนาแก</strong> เพื่อประโยชน์ในการจัดการศึกษาและวัดประเมินผลการเรียนรู้ของท่าน ระบบมีความจำเป็นต้องจัดเก็บและประมวลผลข้อมูลส่วนบุคคล ดังนี้:</p>' +
+                            '<div style="margin-bottom:0.6rem;">' +
+                                '<p style="color:#8a2be2; font-weight:600; font-size:0.88rem; margin:0 0 0.3rem 0;">📋 ข้อมูลที่จัดเก็บ</p>' +
+                                '<p style="color:#ccc; font-size:0.85rem; line-height:1.6; margin:0; padding-left:0.5rem;">ชื่อ-นามสกุล, ศกร.ตำบล, ระดับการศึกษา, คะแนนทดสอบ (ก่อนเรียน-หลังเรียน) และคำตอบในใบงาน</p>' +
+                            '</div>' +
+                            '<div style="margin-bottom:0.6rem;">' +
+                                '<p style="color:#8a2be2; font-weight:600; font-size:0.88rem; margin:0 0 0.3rem 0;">🎯 วัตถุประสงค์</p>' +
+                                '<p style="color:#ccc; font-size:0.85rem; line-height:1.6; margin:0; padding-left:0.5rem;">ใช้สำหรับให้ครูผู้สอนติดตามความก้าวหน้า วิเคราะห์พัฒนาการทางการเรียน และประเมินผลการส่งงานรายบุคคล</p>' +
+                            '</div>' +
+                            '<div>' +
+                                '<p style="color:#8a2be2; font-weight:600; font-size:0.88rem; margin:0 0 0.3rem 0;">🛡️ การคุ้มครองข้อมูล</p>' +
+                                '<p style="color:#ccc; font-size:0.85rem; line-height:1.6; margin:0; padding-left:0.5rem;">ข้อมูลทั้งหมดจะถูกเก็บรักษาเป็นความลับในฐานข้อมูลปลอดภัยของ สกร.ระดับอำเภอนาแก เข้าถึงได้เฉพาะครูผู้สอนและผู้ดูแลระบบ จะไม่มีการเปิดเผยต่อสาธารณะในลักษณะที่ระบุตัวตนได้</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="background:rgba(138,43,226,0.08); border:1px solid rgba(138,43,226,0.2); border-radius:12px; padding:1.2rem;">' +
+                            '<p style="color:#FFD700; font-weight:600; font-size:0.95rem; margin:0 0 0.8rem 0; text-align:center;">📱 ขั้นตอนการใช้งาน 4 ขั้นตอน</p>' +
+                            '<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.7rem;">' +
+                                '<div style="background:rgba(255,255,255,0.04); border-radius:10px; padding:0.8rem; text-align:center;">' +
+                                    '<div style="font-size:1.5rem; margin-bottom:0.3rem;">1️⃣</div>' +
+                                    '<p style="color:#fff; font-size:0.82rem; margin:0; font-weight:600;">เข้าสู่ระบบ</p>' +
+                                    '<p style="color:#999; font-size:0.75rem; margin:0.2rem 0 0 0;">กรอกชื่อ เลือกตำบล และระดับการศึกษา</p>' +
+                                '</div>' +
+                                '<div style="background:rgba(255,255,255,0.04); border-radius:10px; padding:0.8rem; text-align:center;">' +
+                                    '<div style="font-size:1.5rem; margin-bottom:0.3rem;">2️⃣</div>' +
+                                    '<p style="color:#fff; font-size:0.82rem; margin:0; font-weight:600;">ทดสอบก่อนเรียน</p>' +
+                                    '<p style="color:#999; font-size:0.75rem; margin:0.2rem 0 0 0;">ทดสอบความรู้พื้นฐาน ไม่ต้องกังวล</p>' +
+                                '</div>' +
+                                '<div style="background:rgba(255,255,255,0.04); border-radius:10px; padding:0.8rem; text-align:center;">' +
+                                    '<div style="font-size:1.5rem; margin-bottom:0.3rem;">3️⃣</div>' +
+                                    '<p style="color:#fff; font-size:0.82rem; margin:0; font-weight:600;">เรียนรู้เนื้อหา</p>' +
+                                    '<p style="color:#999; font-size:0.75rem; margin:0.2rem 0 0 0;">ศึกษาใบความรู้ อินโฟกราฟิก และวิดีโอ</p>' +
+                                '</div>' +
+                                '<div style="background:rgba(255,255,255,0.04); border-radius:10px; padding:0.8rem; text-align:center;">' +
+                                    '<div style="font-size:1.5rem; margin-bottom:0.3rem;">4️⃣</div>' +
+                                    '<p style="color:#fff; font-size:0.82rem; margin:0; font-weight:600;">ใบงาน + ทดสอบหลังเรียน</p>' +
+                                    '<p style="color:#999; font-size:0.75rem; margin:0.2rem 0 0 0;">ส่งใบงานและดูคะแนนพัฒนาการ</p>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<p style="text-align:center; color:#999; font-size:0.78rem; margin-top:1rem; line-height:1.5;">การกดยอมรับและเข้าสู่ระบบ ถือว่าท่านได้รับทราบและยินยอม<br>ให้ระบบประมวลผลข้อมูลดังกล่าวเพื่อการศึกษา</p>' +
+                    '</div>',
+                    width: '92%',
+                    showConfirmButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: '✅ ยอมรับและเข้าสู่บทเรียน',
+                    denyButtonText: '📖 ดูคู่มือการใช้งานอย่างละเอียด',
+                    confirmButtonColor: '#8a2be2',
+                    denyButtonColor: 'rgba(255, 215, 0, 0.75)',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    background: '#0d0d24',
+                    color: '#fff',
+                    customClass: {
+                        popup: 'pdpa-popup',
+                        confirmButton: 'pdpa-accept-btn',
+                        denyButton: 'pdpa-guide-btn'
+                    }
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        localStorage.setItem(pdpaGuide.STORAGE_KEY, 'true');
+                    } else if (result.isDenied) {
+                        // Show user guide, then re-show PDPA after closing
+                        app.showUserGuide(function() {
+                            pdpaGuide.showWelcomePopup();
+                        });
+                    }
+                });
+            }
+        };
+
+        // Add showUserGuide to the app object (additive, does not modify existing methods)
+        app.showUserGuide = function(onCloseCallback) {
+            Swal.fire({
+                title: '',
+                html: '<div style="text-align:left; max-height:70vh; overflow-y:auto; padding-right:8px;">' +
+                    '<div style="text-align:center; margin-bottom:1.2rem;">' +
+                        '<div style="font-size:2.5rem; margin-bottom:0.5rem;">📖</div>' +
+                        '<h2 style="color:#FFD700; font-size:1.3rem; margin:0 0 0.3rem 0; border:none;">คู่มือการใช้งานระบบ</h2>' +
+                        '<p style="color:#b3b3b3; font-size:0.85rem; margin:0;">ระบบบทเรียนออนไลน์ สกร.ระดับอำเภอนาแก</p>' +
+                    '</div>' +
+
+                    /* Step 1 */
+                    '<div style="background:rgba(138,43,226,0.08); border-left:3px solid #8a2be2; border-radius:0 10px 10px 0; padding:1rem 1.2rem; margin-bottom:0.8rem;">' +
+                        '<p style="color:#8a2be2; font-weight:700; font-size:0.95rem; margin:0 0 0.4rem 0;">ขั้นตอนที่ 1 — เข้าสู่ระบบ (Login)</p>' +
+                        '<p style="color:#ccc; font-size:0.85rem; line-height:1.65; margin:0;">กรอก <strong style="color:#fff;">ชื่อ-นามสกุล</strong> ของตนเอง เลือก <strong style="color:#fff;">ศกร.ระดับตำบล</strong> ที่สังกัด และเลือก <strong style="color:#fff;">ระดับการศึกษา</strong> ที่กำลังเรียน จากนั้นกดปุ่ม "เข้าสู่บทเรียน"</p>' +
+                    '</div>' +
+
+                    /* Step 2 */
+                    '<div style="background:rgba(255,215,0,0.06); border-left:3px solid #FFD700; border-radius:0 10px 10px 0; padding:1rem 1.2rem; margin-bottom:0.8rem;">' +
+                        '<p style="color:#FFD700; font-weight:700; font-size:0.95rem; margin:0 0 0.4rem 0;">ขั้นตอนที่ 2 — ทำแบบทดสอบก่อนเรียน</p>' +
+                        '<p style="color:#ccc; font-size:0.85rem; line-height:1.65; margin:0;">ระบบจะแสดงข้อสอบทีละข้อ กดเลือกคำตอบได้เลย <strong style="color:#fff;">ไม่ต้องกังวลเรื่องคะแนน</strong> เพราะเป็นการทดสอบความรู้ก่อนเรียนเท่านั้น เมื่อทำครบทุกข้อจะเข้าสู่เนื้อหาโดยอัตโนมัติ</p>' +
+                    '</div>' +
+
+                    /* Step 3 */
+                    '<div style="background:rgba(0,200,150,0.06); border-left:3px solid rgba(0,200,150,0.8); border-radius:0 10px 10px 0; padding:1rem 1.2rem; margin-bottom:0.8rem;">' +
+                        '<p style="color:rgba(0,200,150,1); font-weight:700; font-size:0.95rem; margin:0 0 0.4rem 0;">ขั้นตอนที่ 3 — เรียนรู้เนื้อหา</p>' +
+                        '<p style="color:#ccc; font-size:0.85rem; line-height:1.65; margin:0;">ศึกษาเนื้อหาจาก <strong style="color:#fff;">อินโฟกราฟิก</strong> และ <strong style="color:#fff;">วิดีโอ YouTube</strong> ที่ครูจัดเตรียมไว้ (สามารถกดเล่นวิดีโอในระบบได้เลย) จากนั้นกดไปทำใบความรู้และใบงาน</p>' +
+                    '</div>' +
+
+                    /* Step 4 */
+                    '<div style="background:rgba(255,100,150,0.06); border-left:3px solid rgba(255,100,150,0.8); border-radius:0 10px 10px 0; padding:1rem 1.2rem; margin-bottom:0.8rem;">' +
+                        '<p style="color:rgba(255,100,150,1); font-weight:700; font-size:0.95rem; margin:0 0 0.4rem 0;">ขั้นตอนที่ 4 — ใบความรู้และใบงาน</p>' +
+                        '<p style="color:#ccc; font-size:0.85rem; line-height:1.65; margin:0;">อ่าน <strong style="color:#fff;">ใบความรู้ 3 ใบ</strong> จากนั้นกดแท็บ "ใบงาน" เพื่อพิมพ์คำตอบทั้ง 3 ข้อ เมื่อเสร็จกดส่งเพื่อไปทำแบบทดสอบหลังเรียนต่อ</p>' +
+                    '</div>' +
+
+                    /* Step 5 */
+                    '<div style="background:rgba(60,130,255,0.06); border-left:3px solid rgba(60,130,255,0.8); border-radius:0 10px 10px 0; padding:1rem 1.2rem; margin-bottom:1rem;">' +
+                        '<p style="color:rgba(60,130,255,1); font-weight:700; font-size:0.95rem; margin:0 0 0.4rem 0;">ขั้นตอนที่ 5 — ทดสอบหลังเรียน + ดู Dashboard</p>' +
+                        '<p style="color:#ccc; font-size:0.85rem; line-height:1.65; margin:0;">ทำแบบทดสอบหลังเรียน (ข้อสอบชุดเดิมแต่สลับลำดับ) เมื่อเสร็จจะเห็น <strong style="color:#fff;">Dashboard สรุปผล</strong> พร้อมคะแนนก่อนเรียน-หลังเรียน กด "บันทึกข้อมูล" เพื่อส่งผลให้ครู และดูสถิติภาพรวมได้</p>' +
+                    '</div>' +
+
+                    /* Tips */
+                    '<div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:1rem;">' +
+                        '<p style="color:#FFD700; font-weight:600; font-size:0.88rem; margin:0 0 0.5rem 0;">💡 เคล็ดลับการใช้งาน</p>' +
+                        '<ul style="color:#ccc; font-size:0.83rem; line-height:1.7; margin:0; padding-left:1.2rem;">' +
+                            '<li>สามารถใช้งานได้ทั้ง <strong style="color:#fff;">มือถือ แท็บเล็ต และคอมพิวเตอร์</strong></li>' +
+                            '<li>กดปุ่ม 📊 เพื่อดูสถิติภาพรวมได้ตลอดเวลาจากหน้าแรก</li>' +
+                            '<li>กดปุ่ม 🏠 เพื่อกลับหน้าแรกได้ทุกเมื่อ</li>' +
+                            '<li>หากมีปัญหา <strong style="color:#fff;">ติดต่อครูผู้สอนประจำ ศกร.ตำบลของท่าน</strong></li>' +
+                        '</ul>' +
+                    '</div>' +
+                '</div>',
+                width: '92%',
+                confirmButtonText: '✅ เข้าใจแล้ว ปิดคู่มือ',
+                confirmButtonColor: '#8a2be2',
+                background: '#0d0d24',
+                color: '#fff',
+                showCloseButton: true
+            }).then(function() {
+                if (typeof onCloseCallback === 'function') onCloseCallback();
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            app.init();
+            // Show PDPA popup after app loads (slight delay so UI renders first)
+            setTimeout(function() { pdpaGuide.showWelcomePopup(); }, 600);
+        });
+    </script>
+</body>
+</html>
