@@ -867,7 +867,7 @@
         <section id="section-dashboard" class="page-section">
             <div class="glass-card">
                 <div id="dashboard-personal-view">
-                    <h2>🎓 สรุปผลการเรียนรู้ของคุณ</h2>
+                    <h2 id="summary-title">🎓 สรุปผลการเรียนรู้ของคุณ</h2>
                     <div id="dash-student-info" class="student-info-text"></div>
                     <div class="score-cards">
                         <div class="score-card">
@@ -1261,6 +1261,7 @@
                 document.getElementById('section-dashboard').classList.add('active');
 
                 document.getElementById('dash-student-info').innerHTML = '👤 ' + this.state.student.name + ' | ' + this.state.student.level + ' | ' + this.state.student.subDistrict;
+                document.getElementById('summary-title').innerHTML = '🎓 สรุปผลการเรียนรู้ของคุณ (' + this.state.student.name + ')';
                 document.getElementById('dash-pre-score').textContent = this.state.scores.preTest;
                 document.getElementById('dash-post-score').textContent = this.state.scores.postTest;
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1284,30 +1285,42 @@
                     .then(res => res.json())
                     .then(function(res) {
                         if (res.success === true || res.status === 'success') {
-                            Swal.fire({ 
-                                title: 'กำลังประมวลผลแดชบอร์ด...', 
-                                text: 'กรุณารอสักครู่ ระบบกำลังดึงข้อมูลล่าสุด',
-                                allowOutsideClick: false,
-                                didOpen: () => { Swal.showLoading(); }
-                            });
+                            // อัปเดตสถิติบนหน้าเว็บทันทีแบบ Optimistic Update เพื่อให้เห็นผลไวที่สุด
+                            var stats = self.courseData.stats;
+                            if (stats) {
+                                var oldTotal = stats.totalStudents || 0;
+                                var newTotal = oldTotal + 1;
+                                
+                                var preSum = (parseFloat(stats.avgPre) || 0) * oldTotal;
+                                var postSum = (parseFloat(stats.avgPost) || 0) * oldTotal;
+                                
+                                var myPre = parseFloat(self.state.scores.preTest) || 0;
+                                var myPost = parseFloat(self.state.scores.postTest) || 0;
+                                
+                                stats.avgPre = ((preSum + myPre) / newTotal).toFixed(1);
+                                stats.avgPost = ((postSum + myPost) / newTotal).toFixed(1);
+                                stats.totalStudents = newTotal;
+                                
+                                var myLevel = self.state.student.level;
+                                if (stats.eduLevels && stats.eduLevels[myLevel] !== undefined) {
+                                    stats.eduLevels[myLevel]++;
+                                }
+                                
+                                self.state.stats = stats;
+                            }
                             
-                            // หน่วงเวลา 2.5 วินาที เพื่อให้ Google Sheets บันทึกข้อมูลลงเซลล์เสร็จสมบูรณ์ก่อนดึงข้อมูลกลับมา
-                            setTimeout(() => {
-                                fetch(GAS_API_URL + "?action=getCourseData&course=" + COURSE_ID)
-                                    .then(r => r.json())
-                                    .then(function(newData) {
-                                        if(newData.stats) {
-                                            self.courseData.stats = newData.stats;
-                                            self.state.stats = newData.stats;
-                                        }
-                                        Swal.fire({ title: 'สำเร็จ!', text: 'บันทึกข้อมูลและดึงข้อมูลล่าสุดเรียบร้อยแล้ว', icon: 'success', confirmButtonColor: '#8a2be2' });
-                                        self.toggleDashboardView('overview');
-                                    })
-                                    .catch(function() {
-                                        Swal.fire({ title: 'สำเร็จ!', text: 'บันทึกข้อมูลเรียบร้อยแล้ว', icon: 'success', confirmButtonColor: '#8a2be2' });
-                                        self.toggleDashboardView('overview');
-                                    });
-                            }, 2500);
+                            Swal.fire({ title: 'สำเร็จ!', text: 'บันทึกข้อมูลและอัปเดตสถิติเรียบร้อยแล้ว', icon: 'success', confirmButtonColor: '#8a2be2' });
+                            self.toggleDashboardView('overview');
+                            
+                            // ดึงข้อมูลจริงเบื้องหลังแบบเงียบๆ
+                            fetch(GAS_API_URL + "?action=getCourseData&course=" + COURSE_ID)
+                                .then(r => r.json())
+                                .then(function(newData) {
+                                    if(newData.stats) {
+                                        self.courseData.stats = newData.stats;
+                                        self.state.stats = newData.stats;
+                                    }
+                                }).catch(function(){});
                             
                         } else {
                             throw new Error(res.error || res.message || "Unknown Error");
